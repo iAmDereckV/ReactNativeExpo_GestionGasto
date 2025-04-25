@@ -1,0 +1,10 @@
+/GastosApp
+├── App.js
+├── components/
+│   ├── TransactionForm.js
+│   ├── TransactionList.js
+│   └── Summary.js
+├── context/
+│   └── TransactionsContext.js
+└── utils/
+    └── uuid.js
