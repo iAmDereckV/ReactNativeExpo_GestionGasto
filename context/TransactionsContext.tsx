@@ -19,6 +19,8 @@ interface TransactionsContextType {
     descripcion: string,
     monto: number
   ) => void;
+  editarMovimiento: (movimientoEditado: Movimiento) => void;
+  eliminarMovimiento: (id: string) => void;
   borrarTodo: () => void;
   ingresosTotales: number;
   gastosTotales: number;
@@ -51,6 +53,16 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     setMovimientos([...movimientos, nuevo]);
   };
 
+  const editarMovimiento = (movimientoEditado: Movimiento) => {
+    setMovimientos((prev) =>
+      prev.map((m) => (m.id === movimientoEditado.id ? movimientoEditado : m))
+    );
+  };
+
+  const eliminarMovimiento = (id: string) => {
+    setMovimientos((prev) => prev.filter((m) => m.id !== id));
+  };
+
   const borrarTodo = () => {
     setMovimientos([]);
   };
@@ -73,34 +85,19 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     return movimientos.filter((m) => m.fecha.startsWith(mes));
   };
 
-  const editarMovimiento = (id: string, nuevoMovimiento: Omit<Movimiento, "id" | "fecha">) => {
-    setMovimientos((prev) =>
-      prev.map((mov) =>
-        mov.id === id
-          ? { ...mov, ...nuevoMovimiento, fecha: new Date().toISOString() }
-          : mov
-      )
-    );
-  };
-  
-  const eliminarMovimiento = (id: string) => {
-    setMovimientos((prev) => prev.filter((mov) => mov.id !== id));
-  };
-  
-
   return (
     <TransactionsContext.Provider
       value={{
         movimientos,
         agregarMovimiento,
+        editarMovimiento,
+        eliminarMovimiento,
         borrarTodo,
         ingresosTotales,
         gastosTotales,
         balance: ingresosTotales - gastosTotales,
         getMovimientosHoy,
         getMovimientosMes,
-       // editarMovimiento,
-      //  eliminarMovimiento,
       }}
     >
       {children}

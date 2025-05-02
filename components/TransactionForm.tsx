@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,26 +9,56 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useTransactions } from "../context/TransactionsContext";
+import { Movimiento } from "../context/TransactionsContext";
 
-const TransactionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
-  const { agregarMovimiento } = useTransactions();
+interface Props {
+  visible: boolean;
+  onClose: () => void;
+  movimientoEditar?: Movimiento | null;
+}
+
+const TransactionModal = ({ visible, onClose, movimientoEditar }: Props) => {
+  const { agregarMovimiento, editarMovimiento } = useTransactions();
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
   const [tipo, setTipo] = useState<"ingreso" | "gasto">("gasto");
 
-  const handleAgregar = () => {
+  useEffect(() => {
+    if (movimientoEditar) {
+      setDescripcion(movimientoEditar.descripcion);
+      setMonto(movimientoEditar.monto.toString());
+      setTipo(movimientoEditar.tipo);
+    } else {
+      setDescripcion("");
+      setMonto("");
+      setTipo("gasto");
+    }
+  }, [movimientoEditar]);
+
+  const handleSubmit = () => {
     if (!descripcion || !monto) return;
-    agregarMovimiento(tipo, descripcion, parseFloat(monto));
-    setDescripcion("");
-    setMonto("");
-    onClose(); // Cierra el modal después de agregar
+
+    if (movimientoEditar) {
+      editarMovimiento({
+        ...movimientoEditar,
+        descripcion,
+        monto: parseFloat(monto),
+        tipo,
+      });
+    } else {
+      agregarMovimiento(tipo, descripcion, parseFloat(monto));
+    }
+
+    onClose();
   };
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>Crear</Text>
+          <Text style={styles.title}>
+            {movimientoEditar ? "Editar Movimiento" : "Crear Movimiento"}
+          </Text>
 
           <TextInput
             style={styles.input}
@@ -57,7 +87,10 @@ const TransactionModal = ({ visible, onClose }: { visible: boolean; onClose: () 
             />
           </View>
 
-          <Button title="Agregar Movimiento" onPress={handleAgregar} />
+          <Button
+            title={movimientoEditar ? "Guardar Cambios" : "Agregar Movimiento"}
+            onPress={handleSubmit}
+          />
 
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Text style={styles.closeText}>Cerrar</Text>

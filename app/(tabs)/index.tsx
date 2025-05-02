@@ -1,3 +1,4 @@
+// App.tsx
 import React, { useState } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { TransactionsProvider } from "@/context/TransactionsContext";
@@ -5,28 +6,43 @@ import TransactionModal from "@/components/TransactionForm";
 import TransactionActions from "@/components/TransactionActions";
 import TransactionList from "@/components/TransactionList";
 import Summary from "@/components/Summary";
+import { Movimiento } from "@/context/TransactionsContext";
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [movimientoEditar, setMovimientoEditar] = useState<Movimiento | null>(null);
+
+  const abrirModalCrear = () => {
+    setMovimientoEditar(null);
+    setModalVisible(true);
+  };
+
+  const abrirModalEditar = (movimiento: Movimiento) => {
+    setMovimientoEditar(movimiento);
+    setModalVisible(true);
+  };
 
   return (
     <TransactionsProvider>
       <View style={styles.container}>
         <Text style={styles.header}>Gestión de Gastos</Text>
 
-        {/* Botón para abrir el modal */}
-        <Button title="Crear Movimiento" onPress={() => setModalVisible(true)} />
+        <Button title="Crear Movimiento" onPress={abrirModalCrear} />
 
-        {/* Modal con el formulario */}
-        <TransactionModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+        <TransactionModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          movimientoEditar={movimientoEditar}
+        />
 
         <TransactionActions />
         <Summary />
-        <TransactionList />
+        <TransactionList onEdit={abrirModalEditar} />
       </View>
     </TransactionsProvider>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
