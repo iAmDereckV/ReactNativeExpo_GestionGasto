@@ -73,6 +73,21 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     return movimientos.filter((m) => m.fecha.startsWith(mes));
   };
 
+  const editarMovimiento = (id: string, nuevoMovimiento: Omit<Movimiento, "id" | "fecha">) => {
+    setMovimientos((prev) =>
+      prev.map((mov) =>
+        mov.id === id
+          ? { ...mov, ...nuevoMovimiento, fecha: new Date().toISOString() }
+          : mov
+      )
+    );
+  };
+  
+  const eliminarMovimiento = (id: string) => {
+    setMovimientos((prev) => prev.filter((mov) => mov.id !== id));
+  };
+  
+
   return (
     <TransactionsContext.Provider
       value={{
@@ -84,6 +99,8 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
         balance: ingresosTotales - gastosTotales,
         getMovimientosHoy,
         getMovimientosMes,
+       // editarMovimiento,
+      //  eliminarMovimiento,
       }}
     >
       {children}
