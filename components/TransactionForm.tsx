@@ -35,6 +35,14 @@ const TransactionModal = ({ visible, onClose, movimientoEditar }: Props) => {
     }
   }, [movimientoEditar]);
 
+  useEffect(() => {
+  if (!visible) {
+    setDescripcion("");
+    setMonto("");
+    setTipo("gasto");
+  }
+}, [visible]);
+
   const handleSubmit = () => {
     if (!descripcion || !monto) return;
 
@@ -100,6 +108,8 @@ const TransactionModal = ({ visible, onClose, movimientoEditar }: Props) => {
     </Modal>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   modalOverlay: {

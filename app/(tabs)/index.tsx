@@ -6,6 +6,8 @@ import TransactionModal from "@/components/TransactionForm";
 import TransactionActions from "@/components/TransactionActions";
 import TransactionList from "@/components/TransactionList";
 import Summary from "@/components/Summary";
+import DownloadButton from "@/components/DonloadButton";
+
 import { Movimiento } from "@/context/TransactionsContext";
 
 export default function App() {
@@ -28,6 +30,8 @@ export default function App() {
         <Text style={styles.header}>Gestión de Gastos</Text>
 
         <Button title="Crear Movimiento" onPress={abrirModalCrear} />
+
+        <DownloadButton /> 
 
         <TransactionModal
           visible={modalVisible}
